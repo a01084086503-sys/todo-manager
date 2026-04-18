@@ -41,7 +41,8 @@ const buttonVariants = cva(
   }
 )
 
-function Button({
+// Button 기능을 제공한다.
+const Button = ({
   className,
   variant = "default",
   size = "default",
@@ -50,7 +51,7 @@ function Button({
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
-  }) {
+  }) => {
   const Comp = asChild ? Slot.Root : "button"
 
   return (
@@ -62,6 +63,6 @@ function Button({
       {...props}
     />
   )
-}
+};
 
 export { Button, buttonVariants }
