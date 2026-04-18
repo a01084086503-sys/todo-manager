@@ -1,0 +1,122 @@
+---
+description: AI 할 일 관리 웹 서비스(Next.js 15) 개발 규칙 — UX, 오류 처리, 스택, 코딩 스타일
+globs:
+  - "**/*.{ts,tsx,js,jsx,mjs,cjs}"
+  - "**/*.css"
+  - "next.config.*"
+  - "tailwind.config.*"
+  - "eslint.config.*"
+  - ".eslintrc*"
+alwaysApply: true
+---
+
+# AI 할 일 관리 웹 서비스 — 프로젝트 개발 규칙
+
+## 1. 프로젝트 특성
+
+- **프레임워크**: Next.js 15 **App Router** 기반 웹 애플리케이션이다. 라우팅·서버 컴포넌트·서버 액션·Route Handler 사용 시 App Router 관례를 따른다.
+- **사용자 경험 최우선**
+  - 로딩·빈 상태·오류 상태 UI를 빠짐없이 제공한다(스켈레톤, 빈 목록 안내, 재시도 등).
+  - 불필요한 리렌더와 네트워크 호출을 줄이고, 상호작용에 대한 체감 지연을 최소화한다(낙관적 업데이트·디바운스 등은 상황에 맞게 적용).
+- **오류 처리**
+  - 서버(Route Handler, Server Actions, 서버 컴포넌트 데이터 로딩)와 클라이언트 모두에서 예외를 포착하고 사용자에게 **한글로 친절한 메시지**를 보여준다.
+  - **개발 환경**에서는 디버깅을 위해 상세 로그(스택, 원인 구분)를 출력할 수 있으나, **프로덕션**에서는 민감 정보가 노출되지 않도록 메시지와 로그 수준을 구분한다.
+
+## 2. 기술 스택
+
+| 영역 | 선택 |
+|------|------|
+| 프레임워크 | Next.js 15 (App Router) |
+| 언어 | TypeScript (**필수**, `strict` 권장) |
+| 스타일 | Tailwind CSS |
+| UI | shadcn/ui |
+| 백엔드/인증 | Supabase (Auth, DB 등) |
+| AI | Vercel AI SDK(또는 프로젝트에 통합된 AI SDK)로 모델 연동 |
+| 품질 | ESLint (Next.js / TypeScript 권장 구성) |
+
+새 의존성 추가 시 위 스택과의 정합성과 번들 크기를 고려한다.
+
+## 3. 코딩 스타일
+
+- **컴포넌트**: React **함수형 컴포넌트**를 기본으로 사용한다.
+- **함수 선언**: 컴포넌트·훅·유틸·핸들러를 포함해 **모든 함수는 화살표 함수**로 작성한다. (`function` 키워드로 컴포넌트를 정의하지 않는다.)
+- **파일명**: React 컴포넌트 파일은 **파스칼 케이스**로 저장한다. (예: `TodoList.tsx`, `TaskCard.tsx`) 훅·유틸은 프로젝트 기존 관례에 맞추되, 신규 컴포넌트는 파스칼 케이스를 유지한다.
+- **주석·문서화**
+  - 함수·컴포넌트 **상단**에 역할을 한 문장으로 요약하는 **한글 주석**을 필수로 작성한다.
+  - **JSDoc**이 필요한 경우 설명·매개변수·반환값도 **한글**로 기술한다.
+- **ESLint**: 프로젝트 ESLint 설정을 따르며, 경고·오류를 임의로 비활성화하지 않는다. 예외가 필요하면 그 이유를 짧게 주석으로 남긴다.
+
+## 4. 코드 예시 (BAD / GOOD)
+
+아래는 이 프로젝트 규칙을 위반하기 쉬운 지점에 대한 짧은 대비 예시다.
+
+### 컴포넌트·함수는 화살표 함수
+
+```tsx
+// ❌ BAD — `function` 키워드로 컴포넌트 정의
+function TodoList() {
+  return null;
+}
+
+// ✅ GOOD — 한글 한 줄 주석 + 화살표 함수
+/** 할 일 목록을 표시한다. */
+const TodoList = () => {
+  return null;
+};
+```
+
+### 오류 처리(한글 메시지·환경 구분)
+
+```tsx
+// ❌ BAD — 사용자 메시지 없음, 원시 오류 노출·로그만
+try {
+  await saveTodos();
+} catch (e) {
+  alert(String(e));
+}
+
+// ✅ GOOD — 한글 안내 + 개발 환경에서만 상세 로그
+try {
+  await saveTodos();
+} catch (e) {
+  const userMessage = '저장에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+  if (process.env.NODE_ENV === 'development') {
+    console.error('[saveTodos]', e);
+  }
+  // userMessage를 토스트·폼 하단 등 UI에 표시
+}
+```
+
+### 오류·빈 상태 UI
+
+```tsx
+// ❌ BAD — 오류만 영문/원시 값, 재시도 없음
+{error && <p>{String(error)}</p>}
+
+// ✅ GOOD — 한글 안내 + 재시도 등 조치
+{error && (
+  <div className="text-destructive text-sm">
+    <p>목록을 불러오지 못했습니다.</p>
+    <button type="button" onClick={refetch}>
+      다시 시도
+    </button>
+  </div>
+)}
+```
+
+### ESLint 예외 주석
+
+```tsx
+// ❌ BAD — 이유 없이 규칙 비활성화
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const x: any = data;
+
+// ✅ GOOD — 왜 예외인지 한 줄로 명시
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- 외부 SDK가 any만 제공; 타입 래핑 후 제거 예정
+const x: any = data;
+```
+
+## 5. AI 에이전트에게 요청할 때
+
+- 위 UX·오류 처리·스택·스타일을 위반하지 않도록 구현·리팩터링한다.
+- Supabase·AI SDK 연동 시 타입 안전성과 환경 변수(`NEXT_PUBLIC_*` 등) 사용 규칙을 지킨다.
