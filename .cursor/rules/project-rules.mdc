@@ -1,5 +1,5 @@
 ---
-description: AI 할 일 관리 웹 서비스(Next.js 15) 개발 규칙 — UX, 오류 처리, 스택, 코딩 스타일
+description: AI 할 일 관리 웹 서비스(Next.js 16) 개발 규칙 — UX, 오류 처리, 스택, 코딩 스타일
 globs:
   - "**/*.{ts,tsx,js,jsx,mjs,cjs}"
   - "**/*.css"
@@ -14,7 +14,7 @@ alwaysApply: true
 
 ## 1. 프로젝트 특성
 
-- **프레임워크**: Next.js 15 **App Router** 기반 웹 애플리케이션이다. 라우팅·서버 컴포넌트·서버 액션·Route Handler 사용 시 App Router 관례를 따른다.
+- **프레임워크**: Next.js 16 **App Router** 기반 웹 애플리케이션이다. 라우팅·서버 컴포넌트·서버 액션·Route Handler 사용 시 App Router 관례를 따른다.
 - **사용자 경험 최우선**
   - 로딩·빈 상태·오류 상태 UI를 빠짐없이 제공한다(스켈레톤, 빈 목록 안내, 재시도 등).
   - 불필요한 리렌더와 네트워크 호출을 줄이고, 상호작용에 대한 체감 지연을 최소화한다(낙관적 업데이트·디바운스 등은 상황에 맞게 적용).
@@ -26,7 +26,7 @@ alwaysApply: true
 
 | 영역 | 선택 |
 |------|------|
-| 프레임워크 | Next.js 15 (App Router) |
+| 프레임워크 | Next.js 16 (App Router) |
 | 언어 | TypeScript (**필수**, `strict` 권장) |
 | 스타일 | Tailwind CSS |
 | UI | shadcn/ui |

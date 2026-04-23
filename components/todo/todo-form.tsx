@@ -88,6 +88,7 @@ export const TodoForm = ({
   const [category, setCategory] = useState(initial.category)
   const [completed, setCompleted] = useState(initial.completed)
   const [submitting, setSubmitting] = useState(false)
+  const [aiMode, setAiMode] = useState(false)
   const [aiInput, setAiInput] = useState("")
   const [aiPending, setAiPending] = useState(false)
 
@@ -163,34 +164,50 @@ export const TodoForm = ({
       <FieldSet className="gap-4">
         <FieldGroup className="gap-4">
           {mode === "create" ? (
-            <Field>
-              <FieldLabel htmlFor="todo-ai-input">AI 할 일 생성</FieldLabel>
-              <FieldContent>
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <Input
-                    id="todo-ai-input"
-                    value={aiInput}
-                    onChange={(e) => setAiInput(e.target.value)}
-                    placeholder="예: 내일 오후 3시까지 중요한 팀 회의 준비하기"
-                    autoComplete="off"
-                    maxLength={1000}
-                    disabled={aiPending || submitting}
-                  />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => void handleAiGenerate()}
-                    disabled={aiPending || submitting || !aiInput.trim()}
-                    className="sm:shrink-0"
-                  >
-                    {aiPending ? "분석 중..." : "AI로 채우기"}
-                  </Button>
-                </div>
-                <FieldDescription>
-                  자연어로 입력하면 제목, 마감일, 우선순위를 자동으로 채웁니다.
-                </FieldDescription>
-              </FieldContent>
-            </Field>
+            <>
+              <Field orientation="horizontal">
+                <Checkbox
+                  id="todo-ai-mode"
+                  checked={aiMode}
+                  onCheckedChange={(v) => setAiMode(v === true)}
+                  disabled={aiPending || submitting}
+                />
+                <FieldLabel htmlFor="todo-ai-mode" className="font-normal">
+                  AI 모드
+                </FieldLabel>
+              </Field>
+
+              {aiMode ? (
+                <Field>
+                  <FieldLabel htmlFor="todo-ai-input">자연어 할 일 입력</FieldLabel>
+                  <FieldContent>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <Input
+                        id="todo-ai-input"
+                        value={aiInput}
+                        onChange={(e) => setAiInput(e.target.value)}
+                        placeholder="예: 내일 오후 3시까지 중요한 팀 회의 준비하기"
+                        autoComplete="off"
+                        maxLength={1000}
+                        disabled={aiPending || submitting}
+                      />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => void handleAiGenerate()}
+                        disabled={aiPending || submitting || !aiInput.trim()}
+                        className="sm:shrink-0"
+                      >
+                        {aiPending ? "분석 중..." : "AI로 할 일 생성"}
+                      </Button>
+                    </div>
+                    <FieldDescription>
+                      자연어를 입력하면 제목, 설명, 마감일, 우선순위, 카테고리를 자동으로 채웁니다.
+                    </FieldDescription>
+                  </FieldContent>
+                </Field>
+              ) : null}
+            </>
           ) : null}
 
           <Field>

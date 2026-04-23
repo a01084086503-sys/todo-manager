@@ -1,7 +1,8 @@
 "use client"
 
-import { Search } from "lucide-react"
+import { Search, Sparkles } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -18,6 +19,8 @@ import type { TodoPriority } from "@/components/todo/types"
 
 export type StatusFilter = "all" | "active" | "completed" | "overdue"
 export type SortOption = "priority" | "due_date" | "created_at" | "title"
+export type SortOrder = "asc" | "desc"
+export type CategoryFilter = "all" | "업무" | "개인" | "학습"
 
 export type AppToolbarProps = {
   search: string
@@ -26,8 +29,13 @@ export type AppToolbarProps = {
   onStatusFilterChange: (value: StatusFilter) => void
   priorityFilter: "all" | TodoPriority
   onPriorityFilterChange: (value: "all" | TodoPriority) => void
+  categoryFilter: CategoryFilter
+  onCategoryFilterChange: (value: CategoryFilter) => void
   sortBy: SortOption
   onSortByChange: (value: SortOption) => void
+  sortOrder: SortOrder
+  onSortOrderChange: (value: SortOrder) => void
+  onAiSummaryClick: () => void
   className?: string
 }
 
@@ -39,8 +47,13 @@ export const AppToolbar = ({
   onStatusFilterChange,
   priorityFilter,
   onPriorityFilterChange,
+  categoryFilter,
+  onCategoryFilterChange,
   sortBy,
   onSortByChange,
+  sortOrder,
+  onSortOrderChange,
+  onAiSummaryClick,
   className,
 }: AppToolbarProps) => {
   return (
@@ -121,6 +134,50 @@ export const AppToolbar = ({
                 <SelectItem value="title">제목순</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="grid min-w-0 gap-1.5">
+            <Label className="text-muted-foreground text-xs">정렬 순서</Label>
+            <Select value={sortOrder} onValueChange={(v) => onSortOrderChange(v as SortOrder)}>
+              <SelectTrigger className="h-9 w-[min(100vw-2rem,11rem)] min-w-[9rem]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="asc">오름차순</SelectItem>
+                <SelectItem value="desc">내림차순</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid min-w-0 gap-1.5">
+            <Label className="text-muted-foreground text-xs">카테고리</Label>
+            <Select
+              value={categoryFilter}
+              onValueChange={(v) => onCategoryFilterChange(v as CategoryFilter)}
+            >
+              <SelectTrigger className="h-9 w-[min(100vw-2rem,11rem)] min-w-[9rem]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">전체</SelectItem>
+                <SelectItem value="업무">업무</SelectItem>
+                <SelectItem value="개인">개인</SelectItem>
+                <SelectItem value="학습">학습</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid min-w-0 gap-1.5">
+            <Label className="text-muted-foreground text-xs">AI</Label>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-9 min-w-[9rem] gap-1.5"
+              onClick={onAiSummaryClick}
+            >
+              <Sparkles className="size-3.5" aria-hidden />
+              AI 요약
+            </Button>
           </div>
         </div>
       </div>
