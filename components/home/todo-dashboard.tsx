@@ -43,6 +43,11 @@ type AiSummaryResponse = {
   recommendations: string[]
 }
 
+type ApiErrorResponse = {
+  code?: string
+  message?: string
+}
+
 type PeriodTodoStats = {
   todos: Todo[]
   total: number
@@ -107,6 +112,14 @@ const matchesSearch = (todo: Todo, q: string): boolean => {
 const displayNameFromSession = (email: string): string => {
   const local = email.split("@")[0] ?? ""
   return local || "사용자"
+}
+
+/** API 오류 코드를 사용자 친화 문구로 변환한다. */
+const mapAiSummaryErrorMessage = (error: ApiErrorResponse) => {
+  if (error.code === "AI_KEY_MISSING") {
+    return "AI 요약을 사용하려면 관리자 환경 설정이 필요합니다."
+  }
+  return error.message ?? "AI 요약 생성에 실패했습니다. 잠시 후 다시 시도해 주세요."
 }
 
 /** 인증 사용자의 할 일을 조회·편집·정렬해 대시보드를 렌더링한다. */
@@ -281,10 +294,10 @@ export const TodoDashboard = ({ initialSessionUser, initialTodos }: TodoDashboar
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ period, todos }),
         })
-        const data = (await response.json()) as AiSummaryResponse | { message?: string }
+        const data = (await response.json()) as AiSummaryResponse | ApiErrorResponse
         if (!response.ok) {
-          const message = "message" in data ? data.message : "AI 요약 생성에 실패했습니다."
-          throw new Error(message ?? "AI 요약 생성에 실패했습니다.")
+          const message = mapAiSummaryErrorMessage(data as ApiErrorResponse)
+          throw new Error(message)
         }
         const summary = data as AiSummaryResponse
         setSummaryByPeriod((prev) => ({ ...prev, [period]: summary }))

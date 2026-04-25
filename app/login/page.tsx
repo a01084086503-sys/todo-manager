@@ -139,8 +139,8 @@ const LoginPage = () => {
               AI 할 일 매니저
             </h1>
             <p className="text-muted-foreground max-w-sm text-sm leading-relaxed text-balance">
-              간편한 입력과 AI 자동 구조화로 할 일을 정리하고, 직관적인 화면에서
-              빠르게 관리해 보세요.
+              AI가 도와주는 스마트한 할 일 관리로 할 일을 정리하고, 직관적인
+              화면에서 빠르게 관리해 보세요.
             </p>
           </div>
         </div>

@@ -34,3 +34,27 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local` and set values for local development.
+
+```bash
+cp .env.example .env.local
+```
+
+Required server environment variables:
+
+- `GOOGLE_GENERATIVE_AI_API_KEY`
+
+Required client/server environment variables:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_SITE_URL`
+
+For Vercel deployment, add the same variables in:
+
+- `Project Settings -> Environment Variables`
+
+After updating variables, redeploy the project.

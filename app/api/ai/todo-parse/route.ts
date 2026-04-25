@@ -99,7 +99,10 @@ const normalizeDueTime = (dueTime: string | null) => {
 export const POST = async (request: Request) => {
   if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
     return NextResponse.json(
-      { message: "GOOGLE_GENERATIVE_AI_API_KEY 환경 변수가 설정되지 않았습니다." },
+      {
+        code: "AI_KEY_MISSING",
+        message: "AI 기능 설정이 완료되지 않았습니다. 관리자에게 문의해 주세요.",
+      },
       { status: 500 },
     );
   }
